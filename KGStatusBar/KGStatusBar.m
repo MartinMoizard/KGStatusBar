@@ -44,8 +44,14 @@
     [[KGStatusBar sharedView] dismiss];
 }
 
-- (id)initWithFrame:(CGRect)frame {
-	
++ (void)showWithStatus:(NSString *)status color:(UIColor *)color dismissDelay:(NSTimeInterval)delay
+{
+    [[KGStatusBar sharedView] showWithStatus:status barColor:color textColor:[UIColor whiteColor]];
+    [KGStatusBar performSelector:@selector(dismiss) withObject:self afterDelay:delay];
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
     if ((self = [super initWithFrame:frame])) {
 		self.userInteractionEnabled = NO;
         self.backgroundColor = [UIColor clearColor];
@@ -55,7 +61,8 @@
     return self;
 }
 
-- (void)showWithStatus:(NSString *)status barColor:(UIColor*)barColor textColor:(UIColor*)textColor{
+- (void)showWithStatus:(NSString *)status barColor:(UIColor*)barColor textColor:(UIColor*)textColor
+{
     if(!self.superview)
         [self.overlayWindow addSubview:self];
     [self.overlayWindow setHidden:NO];

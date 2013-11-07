@@ -33,7 +33,7 @@
 }
 
 - (IBAction)successButtonPressed:(id)sender {
-    [KGStatusBar showSuccessWithStatus:@"Successfully synced"];
+    [KGStatusBar showWithStatus:@"Successfully synced" color:[UIColor greenColor] dismissDelay:5.0f];
 }
 
 - (IBAction)errorButtonPressed:(id)sender {

@@ -14,5 +14,6 @@
 + (void)showErrorWithStatus:(NSString*)status;
 + (void)showSuccessWithStatus:(NSString*)status;
 + (void)dismiss;
++ (void)showWithStatus:(NSString *)status color:(UIColor *)color dismissDelay:(NSTimeInterval)delay;
 
 @end
