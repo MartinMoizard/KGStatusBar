@@ -84,7 +84,9 @@
     self.stringLabel.hidden = NO;
     self.stringLabel.text = labelText;
     self.stringLabel.textColor = textColor;
+    self.topBar.alpha = 0.0;
     [UIView animateWithDuration:0.4 animations:^{
+        self.topBar.alpha = 1.0;
         self.stringLabel.alpha = 1.0;
     }];
     [self setNeedsDisplay];
@@ -94,6 +96,7 @@
 {
     [UIView animateWithDuration:0.4 animations:^{
         self.stringLabel.alpha = 0.0;
+        self.topBar.alpha = 0.0;
     } completion:^(BOOL finished) {
         [topBar removeFromSuperview];
         topBar = nil;
