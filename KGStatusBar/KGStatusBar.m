@@ -9,9 +9,11 @@
 #import "KGStatusBar.h"
 
 @interface KGStatusBar ()
-    @property (nonatomic, strong, readonly) UIWindow *overlayWindow;
-    @property (nonatomic, strong, readonly) UIView *topBar;
-    @property (nonatomic, strong) UILabel *stringLabel;
+
+@property (nonatomic, strong, readonly) UIWindow *overlayWindow;
+@property (nonatomic, strong, readonly) UIView *topBar;
+@property (nonatomic, strong) UILabel *stringLabel;
+
 @end
 
 @implementation KGStatusBar
@@ -28,7 +30,7 @@
 + (void)showSuccessWithStatus:(NSString*)status
 {
     [KGStatusBar showWithStatus:status];
-    [KGStatusBar performSelector:@selector(dismiss) withObject:self afterDelay:2.0 ];
+    [[KGStatusBar sharedView] performSelector:@selector(dismiss) withObject:[KGStatusBar sharedView] afterDelay:2.0];
 }
 
 + (void)showWithStatus:(NSString*)status {
@@ -37,7 +39,7 @@
 
 + (void)showErrorWithStatus:(NSString*)status {
     [[KGStatusBar sharedView] showWithStatus:status barColor:[UIColor colorWithRed:97.0/255.0 green:4.0/255.0 blue:4.0/255.0 alpha:1.0] textColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
-    [KGStatusBar performSelector:@selector(dismiss) withObject:self afterDelay:2.0 ];
+    [[KGStatusBar sharedView] performSelector:@selector(dismiss) withObject:[KGStatusBar sharedView] afterDelay:2.0];
 }
 
 + (void)dismiss {
@@ -47,7 +49,7 @@
 + (void)showWithStatus:(NSString *)status color:(UIColor *)color dismissDelay:(NSTimeInterval)delay
 {
     [[KGStatusBar sharedView] showWithStatus:status barColor:color textColor:[UIColor whiteColor]];
-    [KGStatusBar performSelector:@selector(dismiss) withObject:self afterDelay:delay];
+    [[KGStatusBar sharedView] performSelector:@selector(dismiss) withObject:[KGStatusBar sharedView] afterDelay:delay];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -63,6 +65,8 @@
 
 - (void)showWithStatus:(NSString *)status barColor:(UIColor*)barColor textColor:(UIColor*)textColor
 {
+    [NSObject cancelPreviousPerformRequestsWithTarget:[KGStatusBar sharedView]];
+    
     if(!self.superview)
         [self.overlayWindow addSubview:self];
     [self.overlayWindow setHidden:NO];
@@ -77,13 +81,14 @@
         stringWidth = stringSize.width;
         stringHeight = stringSize.height;
         
-        labelRect = CGRectMake((self.topBar.frame.size.width / 2) - (stringWidth / 2), 0, stringWidth, stringHeight);
+        labelRect = CGRectMake((self.topBar.frame.size.width / 2) - (stringWidth / 2), 0, stringWidth, self.topBar.frame.size.height);
     }
     self.stringLabel.frame = labelRect;
     self.stringLabel.alpha = 0.0;
     self.stringLabel.hidden = NO;
     self.stringLabel.text = labelText;
     self.stringLabel.textColor = textColor;
+    
     self.topBar.alpha = 0.0;
     [UIView animateWithDuration:0.4 animations:^{
         self.topBar.alpha = 1.0;
@@ -148,7 +153,7 @@
         stringLabel.textAlignment = NSTextAlignmentCenter;
 #endif
 		stringLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		stringLabel.font = [UIFont boldSystemFontOfSize:14.0];
+		stringLabel.font = [UIFont boldSystemFontOfSize:10.0];
 		stringLabel.shadowColor = [UIColor blackColor];
 		stringLabel.shadowOffset = CGSizeMake(0, -1);
         stringLabel.numberOfLines = 0;
@@ -198,12 +203,12 @@
     
     CGAffineTransform rotationTransform = CGAffineTransformMakeRotation([self rotation]);
     [UIView animateWithDuration:[[UIApplication sharedApplication] statusBarOrientationAnimationDuration]
-                       animations:^{
-                           self.overlayWindow.transform = rotationTransform;
-                           // Transform invalidates the frame, so use bounds/center
-                           self.overlayWindow.bounds = CGRectMake(0.f, 0.f, [self rotatedSize].width, [self rotatedSize].height);
-                           self.topBar.frame = CGRectMake(0.f, 0.f, [self rotatedSize].width, 20.f);
-                       }];
+                     animations:^{
+                         self.overlayWindow.transform = rotationTransform;
+                         // Transform invalidates the frame, so use bounds/center
+                         self.overlayWindow.bounds = CGRectMake(0.f, 0.f, [self rotatedSize].width, [self rotatedSize].height);
+                         self.topBar.frame = CGRectMake(0.f, 0.f, [self rotatedSize].width, 20.f);
+                     }];
 }
 
 @end
